@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xerox - Diretoria</title>
+    <!-- Auth Guard -->
+    <script src="auth-guard.js"></script>
+    <script>
+        // Check role privileges immediately
+        const userRole = localStorage.getItem('xerox_role');
+        if (userRole !== 'diretoria' && userRole !== 'admin') {
+            alert('Acesso negado. Apenas diretoria.');
+            window.location.href = 'index.html';
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <a href="diretoria.html" class="sidebar-icon active" title="Gráficos">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </a>
+            <a href="diretoria_detalhes.html" class="sidebar-icon" title="Tabela Detalhada">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </a>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Painel da Diretoria</h1>
+                <button onclick="logout()" class="btn-logout">Sair</button>
+            </header>
+
+            <div class="dashboard-grid" style="grid-template-columns: 1fr; margin-top:20px;">
+                <!-- Estatísticas Gerais -->
+                <div class="stats-overview" style="display:flex; gap:20px; margin-bottom: 2rem;">
+                    <div class="card" style="flex:1; padding:1.5rem; text-align:center;">
+                        <h3>Total de Departamentos</h3>
+                        <p id="total-depts" style="font-size:2rem; font-weight:bold;">-</p>
+                    </div>
+                    <div class="card" style="flex:1; padding:1.5rem; text-align:center;">
+                        <h3>Total de Cópias</h3>
+                        <p id="total-copies" style="font-size:2rem; font-weight:bold;">-</p>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="charts-container"
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div class="card" style="padding: 1rem; height: 350px;">
+                        <h3>Gastos por Departamento</h3>
+                        <div style="height: 220px; width: 100%;">
+                            <canvas id="deptChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card" style="padding: 1rem; height: 350px;">
+                        <h3>Top 5 Professores</h3>
+                        <div style="height: 220px; width: 100%; display:flex; justify-content:center;">
+                            <canvas id="profChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="diretoria.js"></script>
+</body>
+
+</html>

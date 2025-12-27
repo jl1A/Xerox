@@ -25,11 +25,11 @@ async function getProfessorById(id) {
     }
 };
 
-async function getProfessorId(nome){
-    try{
-        const tempProf = profModel.findOne({nome:nome});
+async function getProfessorId(nome) {
+    try {
+        const tempProf = profModel.findOne({ nome: nome });
         return tempDpt._id;
-    }catch{
+    } catch {
         console.error("Erro ao encontrar o departamento:", error);
         throw error;
     }
@@ -43,6 +43,14 @@ async function getProfessorbyName(nome) {
         throw error;
     }
 };
+
+async function getProfessorByDept(deptId) {
+    try {
+        return await profModel.find({ departamento: deptId });
+    } catch (error) {
+        throw error;
+    }
+}
 
 async function getProfessorbydepartamento(departamentoId) {
     try {
@@ -68,7 +76,7 @@ async function getAllProfessorsNames() {
 
 async function updateProfessorImpressao(id, numImpressions) {
     try {
-        const resultado = await profModel.updateOne({ _id: id },{ $inc: { numImpressoes: numImpressions }});
+        const resultado = await profModel.updateOne({ _id: id }, { $inc: { numImpressoes: numImpressions } });
         return resultado;
     }
     catch (error) {
@@ -81,15 +89,15 @@ async function getimpressaoByProfessor(id) {
     try {
         const impressao = await profModel.findById(id).select('numImpressões');
         return impressao;
-    } 
-    catch(error){
+    }
+    catch (error) {
         console.error("Erro ao buscar número de impressões do professor:", error);
         throw error;
     }
 };
 async function updateimpressoesProfessor(id, numImpressions) {
     try {
-        const resultado = await profModel.updateOne({ _id: id },{ $inc: { numImpressões: numImpressions }});
+        const resultado = await profModel.updateOne({ _id: id }, { $inc: { numImpressões: numImpressions } });
         return resultado;
     }
     catch (error) {
@@ -104,6 +112,7 @@ module.exports = {
     getProfessorId,
     getProfessorbyName,
     getProfessorbydepartamento,
+    getProfessorByDept,
     getAllProfessorsNames,
     updateProfessorImpressao,
     getimpressaoByProfessor,

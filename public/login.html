@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xerox - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="login-body">
+    <div class="login-container">
+        <!-- Icon -->
+        <div class="login-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+        </div>
+
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="usuario">Usuario</label>
+                <input type="text" id="usuario" name="usuario" required>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" required>
+            </div>
+
+            <button type="submit" class="btn-entrar">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+            const btn = document.querySelector('.btn-entrar');
+
+            try {
+                btn.innerText = 'Entrando...';
+                btn.disabled = true;
+
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, senha })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Sucesso
+                    localStorage.setItem('xerox_user', data.usuario);
+                    localStorage.setItem('xerox_role', data.role);
+
+                    if (data.role === 'diretoria') {
+                        window.location.href = 'diretoria.html';
+                    } else {
+                        window.location.href = '/';
+                    }
+                } else {
+                    // Erro
+                    alert(data.error || 'Erro ao entrar');
+                    btn.innerText = 'Entrar';
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão');
+                btn.innerText = 'Entrar';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
