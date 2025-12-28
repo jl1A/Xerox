@@ -37,7 +37,8 @@ const impressaoSchema = new mongoose.Schema({
     expedicao: { type: Date, default: Date.now },
     status: { type: Boolean, default: false }, // false = pendente, true = concluídao
     recusado: { type: Boolean, default: false }, // Tag para pedidos cancelados/recusados (X)
-    conclusao: { type: Date } // Data de conclusão real
+    conclusao: { type: Date }, // Data de conclusão real
+    arquivo: { type: String } // Caminho do arquivo PDF
 });
 
 const usuarioSchema = new mongoose.Schema({

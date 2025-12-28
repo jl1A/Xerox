@@ -15,6 +15,27 @@ app.use(express.static('public'));
 
 // --------------------------------- Rotas ---------------------------------
 
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Configure Multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        // Unique filename to avoid collisions
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname))
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Serve uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Rota para buscar impressões pendentes (pedidos ativos)
 app.get('/api/impressoes/pendentes', async (req, res) => {
     try {
@@ -29,10 +50,11 @@ app.get('/api/impressoes/pendentes', async (req, res) => {
 });
 
 // Rota para criar nova impressão
-app.post('/api/impressoes/nova', async (req, res) => {
+app.post('/api/impressoes/nova', upload.single('file'), async (req, res) => {
     try {
         console.log("Recebendo nova impressão:", req.body);
         const { titulo, copias, tipoPapel, colorida, folhaDura, plastificado, user, professor, cliente, tipo } = req.body;
+        const file = req.file; // Uploaded file
 
         let prof;
 
@@ -78,12 +100,18 @@ app.post('/api/impressoes/nova', async (req, res) => {
             prof._id,
             tipoPapel,
             parseInt(copias),
-            colorida || false,
-            folhaDura || false,
-            plastificado || false,
+            colorida === 'true' || colorida === true,
+            folhaDura === 'true' || folhaDura === true,
+            plastificado === 'true' || plastificado === true,
             tipo || 'interno',
-            (tipo === 'externo') // status: true if externo
+            (tipo === 'externo')
         );
+
+        // Update file path if exists
+        if (file) {
+            novaImpressao.arquivo = file.filename;
+            await novaImpressao.save();
+        }
 
         res.status(201).json(novaImpressao);
 
